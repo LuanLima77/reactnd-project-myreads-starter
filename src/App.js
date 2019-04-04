@@ -5,6 +5,7 @@ import Create from'./Create'
 import Header from './Header'
 import Footer from './Footer'
 import {  Route } from 'react-router-dom'
+import Search from './Search';
 
 
 class BooksApp extends React.Component {
@@ -32,6 +33,7 @@ class BooksApp extends React.Component {
       )}/>
 
       <Route path="/create" component = {Create}></Route>
+      <Route path="/search" component = {Search}></Route>
       </div>
      
 
