@@ -19,20 +19,29 @@ class BookCase extends React.Component {
 
   componentDidMount()
   {
-    BooksAPI.getAll()
-            .then(data => 
-            {
-              console.log("RECUPERADOS LIVROS DA API",data);
-              this.setState({books: data});
-              console.log("STATE",this.state);
-            })
-            .catch(err => 
-            {
-              console.log("ERRO AO RECUPERAR LIVROS DA API"); 
-            });
-              
-  }
 
+    if(!this.props.books)
+    {
+      console.log("NAO RECEBEU LIVROS, EXIBE TODOS..");
+      BooksAPI.getAll()
+      .then(data => 
+      {
+        console.log("RECUPERADOS LIVROS DA API",data);
+        this.setState({books: data});
+        console.log("STATE",this.state);
+      })
+      .catch(err => 
+      {
+        console.log("ERRO AO RECUPERAR LIVROS DA API"); 
+      });
+        
+}else
+{
+  this.setState({books: this.props.books});
+}
+
+    }
+   
  
 
   render() {

@@ -21,21 +21,17 @@ class Search extends React.Component {
 
   componentDidMount()
   {
-    BooksAPI.getAll()
-            .then(data => 
-            {
-              console.log("RECUPERADOS LIVROS DA API",data);
-              this.setState({books: data});
-              console.log("STATE",this.state);
-            })
-            .catch(err => 
-            {
-              console.log("ERRO AO RECUPERAR LIVROS DA API"); 
-            });
+    
+    
               
   }
 
- 
+ handleSearch= (event) =>
+ {
+   console.log("THIS",this);
+   console.log("SEARCH MUDOU...", event.target.value);
+  this.setState({keyword : event.target.value}); 
+ }
 
   render() {
     return (
@@ -55,7 +51,9 @@ class Search extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
+                <input type="text" placeholder="Search by title or author"
+                value={this.state.keyword}
+                onChange={this.handleSearch}/>
 
               </div>
             </div>
