@@ -28,10 +28,26 @@ class Search extends React.Component {
 
  handleSearch= (event) =>
  {
-   console.log("THIS",this);
-   console.log("SEARCH MUDOU...", event.target.value);
   this.setState({keyword : event.target.value}); 
- }
+  if(this.state.keyword.length > 2)
+  {
+    BooksAPI.search(this.state.keyword)
+    .then(data => 
+      {
+        this.setState({books: data});
+        console.log("LIVROS FILTRADOS", this.state.books);
+
+  
+      })
+      .catch(err => 
+      {
+        console.log("ERRO AO RECUPERAR LIVROS DA API"); 
+      });
+   }
+  }
+ 
+  
+
 
   render() {
     return (
@@ -60,9 +76,10 @@ class Search extends React.Component {
           
           </div>
 
-          <BookCase books = {this.state.books}>
+          <BookCase books = {this.state.books} refresh={console.log("atualizou filho")}  >
 
           </BookCase>
+
           
       </div>
     )

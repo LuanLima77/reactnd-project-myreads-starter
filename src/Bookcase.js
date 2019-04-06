@@ -13,57 +13,66 @@ class BookCase extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    books : []
+    books: []
   }
 
 
-  componentDidMount()
-  {
+  componentDidMount() {
+  this.setBooks();
+  }
 
-    if(!this.props.books)
+
+  componentWillReceiveProps()
+  {
+    console.log("RECEBERA PROPRIEDADES",this.props);
+    if (this.props.books)
     {
-      console.log("NAO RECEBEU LIVROS, EXIBE TODOS..");
-      BooksAPI.getAll()
-      .then(data => 
-      {
-        console.log("RECUPERADOS LIVROS DA API",data);
-        this.setState({books: data});
-        console.log("STATE",this.state);
-      })
-      .catch(err => 
-      {
-        console.log("ERRO AO RECUPERAR LIVROS DA API"); 
-      });
-        
-}else
-{
-  this.setState({books: this.props.books});
-}
+      this.setState({ books: this.props.books });
 
     }
-   
- 
+  }
+  
 
+   setBooks()
+  {
+
+    if (!this.props.books) {
+      console.log("NAO RECEBEU LIVROS, EXIBE TODOS..");
+      BooksAPI.getAll()
+        .then(data => {
+          console.log("RECUPERADOS LIVROS DA API", data);
+          this.setState({ books: data });
+          console.log("STATE", this.state);
+        })
+        .catch(err => {
+          console.log("ERRO AO RECUPERAR LIVROS DA API");
+        });
+
+    } else {
+      this.setState({ books: this.props.books });
+    }
+
+  }
   render() {
     return (
-      
+
       <div className="app">
-         
-      
-          <div className="list-books">
-          
-            <div className="list-books-content">
-              <div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Currently Reading</h2>
-                  <div className="bookshelf-books">
-                    <ol className="books-grid">
+
+
+        <div className="list-books">
+
+          <div className="list-books-content">
+            <div>
+              <div className="bookshelf">
+                <h2 className="bookshelf-title">Currently Reading</h2>
+                <div className="bookshelf-books">
+                  <ol className="books-grid">
                     {this.state.books.map((book) => (
                       <li key={book.id}>
-                      
+
                         <div className="book">
                           <div className="book-top">
-                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" +book.imageLinks.thumbnail+")" }}></div>
+                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.thumbnail + ")" }}></div>
                             <div className="book-shelf-changer">
                               <select>
                                 <option value="move" disabled>Move to...</option>
@@ -75,38 +84,38 @@ class BookCase extends React.Component {
                             </div>
                           </div>
                           <div className="book-title">{book.title}</div>
-                          <div className="book-authors">{book.authors[0]}</div>
+                          <div className="book-authors">{book.authors ? book.authors[0] : "-"}</div>
                         </div>
-                      </li>                    ))
+                      </li>))
                     }
-                      
-                  
-                    </ol>
-                  </div>
+
+
+                  </ol>
                 </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Want to Read</h2>
-                  <div className="bookshelf-books">
-                    <ol className="books-grid">
-                    
-                    </ol>
-                  </div>
+              </div>
+              <div className="bookshelf">
+                <h2 className="bookshelf-title">Want to Read</h2>
+                <div className="bookshelf-books">
+                  <ol className="books-grid">
+
+                  </ol>
                 </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Read</h2>
-                  <div className="bookshelf-books">
-                    <ol className="books-grid">
-                      
-                    
-                     
-                    </ol>
-                  </div>
+              </div>
+              <div className="bookshelf">
+                <h2 className="bookshelf-title">Read</h2>
+                <div className="bookshelf-books">
+                  <ol className="books-grid">
+
+
+
+                  </ol>
                 </div>
               </div>
             </div>
-            
           </div>
-        
+
+        </div>
+
       </div>
     )
   }
