@@ -12,7 +12,7 @@ class Footer extends React.Component {
 
   render() {
     return (
-        <Link to="/create">
+        <Link to="/search">
          <div className="open-search">
               <button>
               </button>

@@ -1,6 +1,8 @@
 import React from 'react'
 import './App.css'
 import * as BooksAPI from './BooksAPI';
+import BookCaseCategory from './BookcaseCategory';
+
 
 
 class BookCase extends React.Component {
@@ -13,46 +15,63 @@ class BookCase extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
+    currentlyReadingBooks: [],
+    wantToReadBooks: [],
+    readBooks: [],
     books: []
   }
 
 
-  componentDidMount() {
-  this.setBooks();
+
+  async componentDidMount() {
+
+    const books = await BooksAPI.getAll();
+    let currentlyReadingBooks = await this.distributeBooks(books).currentlyReadingBooks;
+    let wantToReadBooks = await this.distributeBooks(books).wantToReadBooks;
+    let readBooks = await this.distributeBooks(books).readBooks;
+
+    this.setState({ currentlyReadingBooks, wantToReadBooks, readBooks });
+
+    console.log("STATE", this.state);
+
+
   }
 
 
-  componentWillReceiveProps()
-  {
-    console.log("RECEBERA PROPRIEDADES",this.props);
-    if (this.props.books)
+
+
+   distributeBooks(books) {
+    let distributeBooks =
     {
-      this.setState({ books: this.props.books });
+      currentlyReadingBooks: [],
+      wantToReadBooks: [],
+      readBooks: []
 
     }
+    books.forEach(book => {
+
+      switch (book.shelf) {
+        case "currentlyReading":
+          distributeBooks.currentlyReadingBooks.push(book);
+
+          break;
+        case "wantToRead":
+          distributeBooks.wantToReadBooks.push(book);
+
+          break;
+        case "read":
+          distributeBooks.readBooks.push(book);
+          break;
+
+      }
+
+    });
+
+    return distributeBooks;
+
   }
-  
 
-   setBooks()
-  {
 
-    if (!this.props.books) {
-      console.log("NAO RECEBEU LIVROS, EXIBE TODOS..");
-      BooksAPI.getAll()
-        .then(data => {
-          console.log("RECUPERADOS LIVROS DA API", data);
-          this.setState({ books: data });
-          console.log("STATE", this.state);
-        })
-        .catch(err => {
-          console.log("ERRO AO RECUPERAR LIVROS DA API");
-        });
-
-    } else {
-      this.setState({ books: this.props.books });
-    }
-
-  }
   render() {
     return (
 
@@ -63,54 +82,16 @@ class BookCase extends React.Component {
 
           <div className="list-books-content">
             <div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">Currently Reading</h2>
-                <div className="bookshelf-books">
-                  <ol className="books-grid">
-                    {this.state.books.map((book) => (
-                      <li key={book.id}>
 
-                        <div className="book">
-                          <div className="book-top">
-                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.thumbnail + ")" }}></div>
-                            <div className="book-shelf-changer">
-                              <select>
-                                <option value="move" disabled>Move to...</option>
-                                <option value="currentlyReading">Currently Reading</option>
-                                <option value="wantToRead">Want to Read</option>
-                                <option value="read">Read</option>
-                                <option value="none">None</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="book-title">{book.title}</div>
-                          <div className="book-authors">{book.authors ? book.authors[0] : "-"}</div>
-                        </div>
-                      </li>))
-                    }
+              <BookCaseCategory name="Currently Reading" books={this.state.currentlyReadingBooks}  >
+              </BookCaseCategory>
+
+              <BookCaseCategory name="Want to Read" books={this.state.wantToReadBooks} >
+              </BookCaseCategory>
 
 
-                  </ol>
-                </div>
-              </div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">Want to Read</h2>
-                <div className="bookshelf-books">
-                  <ol className="books-grid">
-
-                  </ol>
-                </div>
-              </div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">Read</h2>
-                <div className="bookshelf-books">
-                  <ol className="books-grid">
-
-
-
-                  </ol>
-                </div>
-              </div>
+              <BookCaseCategory name="Read" books={this.state.readBooks} >
+              </BookCaseCategory>
             </div>
           </div>
 
