@@ -24,6 +24,12 @@ class BookCase extends React.Component {
 
 
   async componentDidMount() {
+this.initializeBooks();
+
+  }
+
+  async initializeBooks()
+  {
 
     const books = await BooksAPI.getAll();
     let currentlyReadingBooks = await this.distributeBooks(books).currentlyReadingBooks;
@@ -31,13 +37,7 @@ class BookCase extends React.Component {
     let readBooks = await this.distributeBooks(books).readBooks;
 
     this.setState({ currentlyReadingBooks, wantToReadBooks, readBooks });
-
-    console.log("STATE", this.state);
-
-
   }
-
-
 
 
    distributeBooks(books) {
@@ -71,7 +71,11 @@ class BookCase extends React.Component {
 
   }
 
+updateBookcase = () =>
+{
+  this.initializeBooks();
 
+}
   render() {
     return (
 
@@ -83,14 +87,23 @@ class BookCase extends React.Component {
           <div className="list-books-content">
             <div>
 
-              <BookCaseCategory name="Currently Reading" books={this.state.currentlyReadingBooks}  >
+              <BookCaseCategory 
+                   name="Currently Reading" 
+                  books={this.state.currentlyReadingBooks}
+                  refresh={this.updateBookcase}  >
               </BookCaseCategory>
 
-              <BookCaseCategory name="Want to Read" books={this.state.wantToReadBooks} >
+              <BookCaseCategory 
+                  name="Want to Read" 
+                  books={this.state.wantToReadBooks}
+                  refresh={this.updateBookcase}  >
               </BookCaseCategory>
 
 
-              <BookCaseCategory name="Read" books={this.state.readBooks} >
+              <BookCaseCategory 
+                  name="Read" 
+                  books={this.state.readBooks}
+                  refresh={this.updateBookcase}  >
               </BookCaseCategory>
             </div>
           </div>

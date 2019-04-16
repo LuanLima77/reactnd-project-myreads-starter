@@ -1,5 +1,7 @@
 import React from 'react'
 import './App.css'
+import * as BooksAPI from './BooksAPI';
+
 
 
 class BookCaseCategory extends React.Component {
@@ -18,7 +20,6 @@ class BookCaseCategory extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log("RECEBENDO PROPS", props);
     if (props.books) {
       this.setState({ books: props.books });
     }
@@ -34,6 +35,14 @@ class BookCaseCategory extends React.Component {
   handleBookcaseChange(book, event) {
     console.log("CONTEXTO", event.target.value);
     console.log("LIVRO", book);
+    BooksAPI.update(book,event.target.value)
+    .then(updateOk => {
+       console.log("ATUALIZACAO COM SUCESSO",updateOk);
+       this.props.refresh();
+    })
+    .catch(error => {
+      console.log("ATUALIZACAO COM ERRO",error);
+    });
 
   }
 
@@ -50,7 +59,7 @@ class BookCaseCategory extends React.Component {
                     <div className="book-top">
                       <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.thumbnail + ")" }}></div>
                       <div className="book-shelf-changer">
-                        <select value={book} onChange={this.handleBookcaseChange.bind(this, book)}
+                        <select value={book.shelf} onChange={this.handleBookcaseChange.bind(this, book)}
                         >
                           <option value="move" disabled>Move to...</option>
                           <option value="currentlyReading">Currently Reading</option>

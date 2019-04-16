@@ -26,6 +26,7 @@ class Search extends React.Component {
       BooksAPI.search(this.state.keyword)
         .then(data => {
           this.setState({ books: data });
+          console.log("search", data);
 
 
         })
@@ -41,8 +42,6 @@ class Search extends React.Component {
     return (
 
       <div className="app">
-
-
 
         <div className="search-books">
           <div className="search-books-bar">
