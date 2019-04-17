@@ -21,26 +21,38 @@ class BookCase extends React.Component {
     books: []
   }
 
+  componentDidMount() {
 
+    this.setBooks();
+  }
 
-  async componentDidMount() {
-this.initializeBooks();
+  async setBooks() {
+    const books = await BooksAPI.getAll();
+    this.setState({ books: books });
+    this.initializeBooks();
+  }
+
+  componentWillReceiveProps(props) {
+
+    if (props.books) {
+      this.setState({ books: props.books })
+      console.log("SETOU BOOKS...");
+    }
+    this.initializeBooks();
 
   }
 
-  async initializeBooks()
-  {
 
-    const books = await BooksAPI.getAll();
-    let currentlyReadingBooks = await this.distributeBooks(books).currentlyReadingBooks;
-    let wantToReadBooks = await this.distributeBooks(books).wantToReadBooks;
-    let readBooks = await this.distributeBooks(books).readBooks;
+  initializeBooks() {
+    let currentlyReadingBooks = this.distributeBooks().currentlyReadingBooks;
+    let wantToReadBooks = this.distributeBooks().wantToReadBooks;
+    let readBooks = this.distributeBooks().readBooks;
 
     this.setState({ currentlyReadingBooks, wantToReadBooks, readBooks });
   }
 
 
-   distributeBooks(books) {
+  distributeBooks() {
     let distributeBooks =
     {
       currentlyReadingBooks: [],
@@ -48,7 +60,8 @@ this.initializeBooks();
       readBooks: []
 
     }
-    books.forEach(book => {
+    console.log("DISTRIBUTEBOOKS ENXERGA", this.state.books);
+    this.state.books.forEach(book => {
 
       switch (book.shelf) {
         case "currentlyReading":
@@ -63,19 +76,21 @@ this.initializeBooks();
           distributeBooks.readBooks.push(book);
           break;
 
+        default:
+          console.log("SE ENCAIXA EM PORRA NENHUMA", book);
+
       }
 
     });
+    console.log('LIVROS DISTRIBUIDOS', distributeBooks);
 
     return distributeBooks;
 
   }
 
-updateBookcase = () =>
-{
-  this.initializeBooks();
-
-}
+  updateBookcase = () => {
+    this.setBooks();
+  }
   render() {
     return (
 
@@ -87,23 +102,23 @@ updateBookcase = () =>
           <div className="list-books-content">
             <div>
 
-              <BookCaseCategory 
-                   name="Currently Reading" 
-                  books={this.state.currentlyReadingBooks}
-                  refresh={this.updateBookcase}  >
+              <BookCaseCategory
+                name="Currently Reading"
+                books={this.state.currentlyReadingBooks}
+                refresh={this.updateBookcase}  >
               </BookCaseCategory>
 
-              <BookCaseCategory 
-                  name="Want to Read" 
-                  books={this.state.wantToReadBooks}
-                  refresh={this.updateBookcase}  >
+              <BookCaseCategory
+                name="Want to Read"
+                books={this.state.wantToReadBooks}
+                refresh={this.updateBookcase}  >
               </BookCaseCategory>
 
 
-              <BookCaseCategory 
-                  name="Read" 
-                  books={this.state.readBooks}
-                  refresh={this.updateBookcase}  >
+              <BookCaseCategory
+                name="Read"
+                books={this.state.readBooks}
+                refresh={this.updateBookcase}  >
               </BookCaseCategory>
             </div>
           </div>
