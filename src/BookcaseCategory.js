@@ -11,6 +11,7 @@ class BookCaseCategory extends React.Component {
 
     books: [],
     name: "",
+    possibleShelfs: ["currentlyReading", "wantToRead", "read"]
   }
 
   constructor(props) {
@@ -60,9 +61,15 @@ class BookCaseCategory extends React.Component {
                 <li key={book.id}>
                   <div className="book">
                     <div className="book-top">
-                      <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.thumbnail + ")" }}></div>
+                      <div className="book-cover" 
+                      style={ book.imageLinks? 
+                        { width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.thumbnail + ")" }
+                      : null}>
+                      </div>
                       <div className="book-shelf-changer">
-                        <select value={book.shelf} onChange={this.handleBookcaseChange.bind(this, book)}
+                        <select 
+                        value= {this.state.possibleShelfs.includes(book.shelf) ? book.shelf : "none"}
+                        onChange={this.handleBookcaseChange.bind(this, book)}
                         >
                           <option value="move" disabled>Move to...</option>
                           <option value="currentlyReading">Currently Reading</option>
