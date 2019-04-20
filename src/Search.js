@@ -17,17 +17,55 @@ class Search extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     books: [],
+    shelfBooks: [],
     keyword: ""
   }
+
+  componentDidMount() {
+
+    this.setShelfBooks();
+  }
+
+
+  async setShelfBooks(updateShelf) {
+    const books = await BooksAPI.getAll();
+    this.setState({ shelfBooks: books });
+    if(updateShelf)
+    {
+      this.distributeBooks();
+
+    }
+  }
+
+
+  updateBooks = () => {
+    
+this.setShelfBooks(true);
+}
+
+  distributeBooks(books) {
+
+    books.forEach(book => {
+
+      this.state.shelfBooks.forEach(shelfBook => {
+        if(book.id === shelfBook.id)
+        {
+          console.log("SEPARAR NA ESTANTE...",shelfBook.shelf);
+          book.shelf = shelfBook.shelf; 
+        }
+      });
+    });
+    this.setState({ books: books });
+  }
+
 
   handleSearch = (event) => {
     this.setState({ keyword: event.target.value });
     if (this.state.keyword.length > 2) {
       BooksAPI.search(this.state.keyword)
         .then(data => {
-          if(data.length)
-          {
-            this.setState({ books: data });
+          if (data.length) {
+            this.distributeBooks(data);
 
           }
           console.log("search", data);
@@ -55,7 +93,7 @@ class Search extends React.Component {
               >Close</button>
             </Link>
             <div className="search-books-input-wrapper">
-              
+
               <input type="text" placeholder="Search by title or author"
                 value={this.state.keyword}
                 onChange={this.handleSearch} />
@@ -66,9 +104,10 @@ class Search extends React.Component {
         </div>
         <br></br>
         <BookCaseCategory
-                books={this.state.books}
-                >
-              </BookCaseCategory>
+          books={this.state.books}
+          refresh={this.updateBooks}
+        >
+        </BookCaseCategory>
 
 
       </div>
