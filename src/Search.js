@@ -18,7 +18,8 @@ class Search extends React.Component {
      */
     filteredBooks: [],
     shelfBooks: [],
-    keyword: ""
+    keyword: "",
+    notFound: false
   }
 
   componentDidMount() {
@@ -69,12 +70,17 @@ class Search extends React.Component {
 
   handleSearch = (event) => {
     this.setState({ keyword: event.target.value });
-    if (this.state.keyword.length > 2) {
-      BooksAPI.search(this.state.keyword)
+
+    if (event.target.value !== '') {
+      BooksAPI.search(event.target.value)
         .then(data => {
           if (data.length) {
             this.distributeBooks(data);
 
+          }else
+          {
+            this.setState({ filteredBooks: [] });
+            this.setState({notFound : true});
           }
 
 
@@ -82,6 +88,10 @@ class Search extends React.Component {
         .catch(err => {
           console.log("ERRO AO RECUPERAR LIVROS DA API");
         });
+    }else
+    {
+      this.setState({ filteredBooks: [] });
+
     }
   }
 
@@ -116,7 +126,11 @@ class Search extends React.Component {
         >
         </BookCaseCategory>
 
-
+          {this.state.notFound  &&
+        <h2>
+        <p className="not-found">Sorry, we do not find any book that matches the search criteria provided :(</p>
+        </h2>
+      }
       </div>
     )
   }
