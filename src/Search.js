@@ -16,7 +16,7 @@ class Search extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    books: [],
+    filteredBooks: [],
     shelfBooks: [],
     keyword: ""
   }
@@ -26,36 +26,44 @@ class Search extends React.Component {
     this.setShelfBooks();
   }
 
+  /**
+   * 
+   * 
+   * Recupera os livros que o usuário já catalogou
+   */
+  async setShelfBooks(updateView) {
 
-  async setShelfBooks(updateShelf) {
-    const books = await BooksAPI.getAll();
-    this.setState({ shelfBooks: books });
-    if(updateShelf)
-    {
-      this.distributeBooks();
+    const shelfBooks = await BooksAPI.getAll();
+    this.setState({ shelfBooks: shelfBooks });
 
+    if (updateView) {
+      const filteredBooks = this.state.filteredBooks;
+      this.distributeBooks(filteredBooks);
     }
+
   }
 
 
+  //Funcao chamada quando um livro é trocado de prateleira.
   updateBooks = () => {
-    
-this.setShelfBooks(true);
-}
 
-  distributeBooks(books) {
+    this.setShelfBooks(true);
 
-    books.forEach(book => {
+  }
+
+
+  /**Busca os livros que o usuario ja catalogou e acrescenta-os sua informacao de estante */
+  distributeBooks(filteredBooks) {
+    filteredBooks.forEach(filteredBook => {
 
       this.state.shelfBooks.forEach(shelfBook => {
-        if(book.id === shelfBook.id)
-        {
-          console.log("SEPARAR NA ESTANTE...",shelfBook.shelf);
-          book.shelf = shelfBook.shelf; 
+        if (filteredBook.id === shelfBook.id) {
+          filteredBook.shelf = shelfBook.shelf;
+
         }
       });
     });
-    this.setState({ books: books });
+    this.setState({ filteredBooks: filteredBooks });
   }
 
 
@@ -68,7 +76,6 @@ this.setShelfBooks(true);
             this.distributeBooks(data);
 
           }
-          console.log("search", data);
 
 
         })
@@ -104,7 +111,7 @@ this.setShelfBooks(true);
         </div>
         <br></br>
         <BookCaseCategory
-          books={this.state.books}
+          books={this.state.filteredBooks}
           refresh={this.updateBooks}
         >
         </BookCaseCategory>

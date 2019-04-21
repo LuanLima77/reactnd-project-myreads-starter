@@ -34,13 +34,10 @@ class BookCaseCategory extends React.Component {
 
 
   handleBookcaseChange(book, event) {
-    console.log("CONTEXTO", event.target.value);
-    console.log("LIVRO", book);
     BooksAPI.update(book, event.target.value)
       .then(updateOk => {
         console.log("ATUALIZACAO COM SUCESSO", updateOk);
         if (this.props.refresh) {
-          console.log("atualizando pai...");
           this.props.refresh();
         }
       })
